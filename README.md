@@ -49,7 +49,7 @@ Replace the placeholders with your actual values:
 
 2. Open your browser and go to http://localhost:8000 to access the API.
 
-## API Endpoints
-# Authentication
-POST /api/v1/users/register: Register a new user. 
-POST /api/v1/users/login: Login with email and password.
+# API Endpoints
+## Authentication
+ - POST /api/v1/users/register: Register a new user. 
+ - POST /api/v1/users/login: Login with email and password.
