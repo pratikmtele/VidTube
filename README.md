@@ -51,5 +51,5 @@ Replace the placeholders with your actual values:
 
 ## API Endpoints
 # Authentication
-POST /api/v1/users/register: Register a new user.
+POST /api/v1/users/register: Register a new user. 
 POST /api/v1/users/login: Login with email and password.
