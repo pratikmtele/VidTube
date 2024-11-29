@@ -25,7 +25,7 @@ Before you begin, ensure you have the following installed:
    ```bash
    MONGO_URL=your-mongodb-uri
    PORT=8000
-   CORS_ORIGIN=*
+   CORS_ORIGIN=* # add frontend url
     
    ACCESS_TOKEN_SECRET=your-access-token-secret
    ACCESS_TOKEN_EXPIRY=1d
@@ -36,8 +36,6 @@ Before you begin, ensure you have the following installed:
    CLOUDINARY_CLOUD_NAME=your-cloudinary-cloud-name
    CLOUDINARY_API_KEY=your-cloudinary-api-key
    CLOUDINARY_SECRET_KEY=your-cloudinary-secret-key
-
-   CORS_ORIGIN=http://frontend-url # Uncomment and add the frontend URL to make it more secure
 
 Replace the placeholders with your actual values:
 
