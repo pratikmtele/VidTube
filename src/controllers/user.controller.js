@@ -90,8 +90,6 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
   const { email, username, password } = req.body;
 
-  console.log(email, username, password);
-
   if (!email) throw new ApiError(400, "Email is required");
 
   if (!password) throw new ApiError(400, "Password is required");
@@ -148,14 +146,16 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
       process.env.REFRESH_TOKEN_SECRET
     );
 
-    const user = await findById(decodedRefreshToken?._id);
+    const user = await User.findById(decodedRefreshToken?._id).select(
+      "-password"
+    );
 
     if (!user) throw new ApiError(401, "Invalid refresh token");
 
     if (incomingRefreshToken !== user.refreshToken)
       throw new ApiError(401, "Invalid refresh token");
 
-    options = {
+    let options = {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
     };
@@ -168,11 +168,15 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
       .cookie("accessToken", accessToken, options)
       .cookie("refreshToken", newRefreshToken, options)
       .json(
-        201,
-        { accessToken, refreshToken: newRefreshToken },
-        "Access token refreshed successfully"
+        new ApiResponse(
+          200,
+          { accessToken, refreshToken: newRefreshToken },
+          "Access token refreshed successfully"
+        )
       );
   } catch (error) {
+    console.log(error);
+
     throw new ApiError(
       500,
       "Something went wrong while refreshing access token"
@@ -190,6 +194,11 @@ const logoutUser = asyncHandler(async (req, res) => {
     },
     { new: true }
   );
+
+  let options = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+  };
 
   return res
     .status(200)
@@ -358,8 +367,6 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
       },
     },
   ]);
-
-  console.log(channel);
 
   if (!channel?.length) throw new ApiError(404, "Channel not found");
 
