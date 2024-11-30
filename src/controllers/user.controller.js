@@ -8,11 +8,11 @@ import mongoose from "mongoose";
 
 const generateAccessAndRefreshToken = async (userId) => {
   try {
-    const user = User.findById(userId);
+    const user = await User.findById(userId);
     if (!user) throw new ApiError(404, "User not found");
 
-    const accessToken = user.generateAccessToken();
-    const refreshToken = user.generateRefreshToken();
+    const accessToken = await user.generateAccessToken();
+    const refreshToken = await user.generateRefreshToken();
 
     user.refreshToken = refreshToken;
     await user.save({ validateBeforeSave: false });
@@ -21,7 +21,8 @@ const generateAccessAndRefreshToken = async (userId) => {
   } catch (error) {
     throw new ApiError(
       500,
-      "Something went wrong while generating access and refresh token"
+      "Something went wrong while generating access and refresh token",
+      error
     );
   }
 };
@@ -89,6 +90,8 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
   const { email, username, password } = req.body;
 
+  console.log(email, username, password);
+
   if (!email) throw new ApiError(400, "Email is required");
 
   if (!password) throw new ApiError(400, "Password is required");
@@ -104,10 +107,12 @@ const loginUser = asyncHandler(async (req, res) => {
 
   if (!isPasswordValid) throw new ApiError(401, "Invalid credentials");
 
-  const { accessToken, refreshToken } = generateAccessAndRefreshToken(user._id);
+  const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
+    user._id
+  );
 
   const loggedInUser = await User.findById(user._id).select(
-    "-password, -refreshToken"
+    "-password -refreshToken"
   );
 
   if (!loggedInUser) throw new ApiError(400, "User not found");
