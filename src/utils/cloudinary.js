@@ -18,19 +18,25 @@ const uploaOnCloudinary = async (localFilePath, folderName) => {
       folder: folderName,
     });
 
-    // file has benn uploaded on cloudinary
-    fs.unlinkSync(localFilePath);
+    // file has been uploaded on cloudinary
+    if (fs.existsSync(localFilePath)) {
+      fs.unlinkSync(localFilePath);
+    }
+
     return response;
   } catch (error) {
     console.log("Cloudinary Error: ", error);
-    fs.unlinkSync(localFilePath);
+    if (fs.existsSync(localFilePath)) {
+      fs.unlinkSync(localFilePath);
+    }
+
     return null;
   }
 };
 
 const deleteOnCloudinary = async (publicId) => {
   try {
-    const response = await cloudinary.uploader.destroy(publicId);
+    await cloudinary.uploader.destroy(publicId);
   } catch (error) {
     console.log("Cloudinary Error: ", error);
   }
